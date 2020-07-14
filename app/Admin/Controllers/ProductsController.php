@@ -27,7 +27,7 @@ class ProductsController extends AdminController
         $grid = new Grid(new Product());
 
         $grid->column('id', __('Id'))->sortable();
-        $grid->column('title', __('Product Name'));
+        $grid->column('title', __('Title'));
         $grid->column('description', __('Description'));
         $grid->column('image', __('Image'));
         $grid->column('on_sale', __('On sale'))->display(function ($val)
@@ -64,24 +64,24 @@ class ProductsController extends AdminController
      * @param mixed $id
      * @return Show
      */
-    protected function detail($id)
-    {
-        $show = new Show(Product::findOrFail($id));
+    // protected function detail($id)
+    // {
+    //     $show = new Show(Product::findOrFail($id));
 
-        $show->field('id', __('Id'));
-        $show->field('title', __('Title'));
-        $show->field('description', __('Description'));
-        $show->field('image', __('Image'));
-        $show->field('on_sale', __('On sale'));
-        $show->field('rating', __('Rating'));
-        $show->field('sold_count', __('Sold count'));
-        $show->field('review_count', __('Review count'));
-        $show->field('price', __('Price'));
-        $show->field('created_at', __('Created at'));
-        $show->field('updated_at', __('Updated at'));
+    //     $show->field('id', __('Id'));
+    //     $show->field('title', __('Title'));
+    //     $show->field('description', __('Description'));
+    //     $show->field('image', __('Image'));
+    //     $show->field('on_sale', __('On sale'));
+    //     $show->field('rating', __('Rating'));
+    //     $show->field('sold_count', __('Sold count'));
+    //     $show->field('review_count', __('Review count'));
+    //     $show->field('price', __('Price'));
+    //     $show->field('created_at', __('Created at'));
+    //     $show->field('updated_at', __('Updated at'));
 
-        return $show;
-    }
+    //     return $show;
+    // }
 
     /**
      * Make a form builder.
@@ -92,14 +92,23 @@ class ProductsController extends AdminController
     {
         $form = new Form(new Product());
 
-        $form->text('title', __('Title'));
-        $form->textarea('description', __('Description'));
+        $form->text('title', __('Product title'))->rules('required');
+        $form->quill('description', __('Description'))->rules('required');
         $form->image('image', __('Image'));
-        $form->switch('on_sale', __('On sale'))->default(1);
-        $form->decimal('rating', __('Rating'))->default(5.00);
-        $form->number('sold_count', __('Sold count'));
-        $form->number('review_count', __('Review count'));
-        $form->decimal('price', __('Price'));
+        $form->switch('on_sale', __('On sale'))->default(0);
+       
+        $form->hasMany('skus', 'SKU List', function (Form\NestedForm $form)
+        {
+            $form->text('title', 'SKU Title')->rules('required');
+            $form->text('description', 'SKU Description')->rules('required');
+            $form->text('price', 'Price')->rules('required|numeric|min:0.01');
+            $form->text('stock', 'Stock')->rules('required|integer|min:0');
+        });
+
+        $form->saving(function (Form $form)
+        {
+            $form->model()->price = collect($form->input('skus'))->where(Form::REMOVE_FLAG_NAME, 0)->min('price')?:0;
+        });
 
         return $form;
     }
