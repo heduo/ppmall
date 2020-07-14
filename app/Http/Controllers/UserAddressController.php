@@ -28,6 +28,7 @@ class UserAddressController extends Controller
             'suburb',
             'postcode',
             'address1',
+            'address2',
             'contact_name',
             'contact_phone',
         ]));
@@ -35,5 +36,36 @@ class UserAddressController extends Controller
         return redirect()->route('user_addresses.index');
     }
 
+    public function edit(UserAddress $user_address)
+    {
+        $this->authorize('own', $user_address);
+       
+        return view('user_addresses.create_and_edit', ['address' => $user_address]);
+    }
 
+    public function update(UserAddress $user_address, UserAddressRequest $request)
+    {
+        $this->authorize('own', $user_address);
+        $user_address->update($request->only([
+            'country',
+            'state',
+            'suburb',
+            'postcode',
+            'address1',
+            'address2',
+            'contact_name',
+            'contact_phone'
+        ]));
+
+        return redirect()->route('user_addresses.index');
+    }
+
+    public function destroy(UserAddress $user_address)
+    {
+        $this->authorize('own', $user_address);
+
+        $user_address->delete();
+
+        return [];
+    }
 }

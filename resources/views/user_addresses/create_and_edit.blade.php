@@ -1,12 +1,12 @@
 @extends('layouts.app')
-@section('title', 'Add Shipping Address')
+@section('title', ($address->id ? 'Edit' : 'Add').' Shipping Address')
 
 @section('content')
 <div>
     <div class="card">
         <div class="card-header">
             <h3 class="text-center">
-                Add New Shipping Address
+                {{ $address->id ? 'Edit':'Add'}} Shipping Address
             </h3>
         </div>
         <div class="card-body">
@@ -22,7 +22,12 @@
             @endif
            
             <address-form inline-template>
-                <form class="form-horizontal" role="form" action="{{route('user_addresses.store')}}" method="post">
+                @if($address->id)
+                    <form class="form-horizontal" role="form" action="{{route('user_addresses.update', ['user_address'=>$address->id])}}" method="post">
+                        {{method_field('PUT')}}
+                @else 
+                    <form class="form-horizontal" role="form" action="{{route('user_addresses.store')}}" method="post">
+                @endif
                     {{ csrf_field()}}
                     <div>
                         <div class="form-group jumbotron">
