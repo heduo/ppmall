@@ -20,6 +20,7 @@
         @include('layouts._footer')
     </div>
     <!-- JS -->
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD8TJCdNV16dWDi86u9dTU2s7rUVepqGpg&libraries=places"></script>
     <script src="{{ mix('js/app.js') }}"></script>
 </body>
 </html>

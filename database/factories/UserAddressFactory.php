@@ -21,11 +21,12 @@ $factory->define(UserAddress::class, function (Faker $faker) {
     $address = $faker->randomElement($addresses);
 
     return [
+        'country' => 'Australia',
         'state' => $address[0],
         'suburb' => $address[1],
-        'district' => '',
-        'address' => sprintf('%d %s St', $faker->randomNumber(2), $faker->firstName()),
-        'zip' => $faker->randomNumber(4),
+        'address1' => sprintf('%d %s St', $faker->randomNumber(2), $faker->firstName()),
+        'address2' => '',
+        'postcode' => $faker->randomNumber(4),
         'contact_name' => $faker->name,
         'contact_phone' => $faker->randomNumber
     ];

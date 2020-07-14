@@ -27,7 +27,7 @@
             {{ Auth::user()->name }}
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a href="{{ route('user_addresses.index')}}" class="dropdown-item">Delivery Addresses</a>
+            <a href="{{ route('user_addresses.index')}}" class="dropdown-item">Shipping Addresses</a>
             <a class="dropdown-item" id="logout" href="#"
                onclick="event.preventDefault();document.getElementById('logout-form').submit();">Logout</a>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

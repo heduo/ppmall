@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\UserAddress;
 use Illuminate\Http\Request;
+use App\Http\Requests\UserAddressRequest;
 
 class UserAddressController extends Controller
 {
@@ -12,4 +14,26 @@ class UserAddressController extends Controller
             'addresses' => $request->user()->addresses,
         ]);
     }
+
+    public function create()
+    {
+        return view('user_addresses.create_and_edit', ['address' => new UserAddress()]);
+    }
+
+    public function store(UserAddressRequest $request)
+    {
+        $request->user()->addresses()->create($request->only([
+            'country',
+            'state',
+            'suburb',
+            'postcode',
+            'address1',
+            'contact_name',
+            'contact_phone',
+        ]));
+
+        return redirect()->route('user_addresses.index');
+    }
+
+
 }

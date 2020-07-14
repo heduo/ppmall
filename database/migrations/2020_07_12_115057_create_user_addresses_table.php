@@ -17,11 +17,12 @@ class CreateUserAddressesTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->string('country');
             $table->string('state');
             $table->string('suburb');
-            $table->string('district');
-            $table->string('address');
-            $table->unsignedInteger('zip');
+            $table->string('address1');
+            $table->string('address2');
+            $table->unsignedInteger('postcode');
             $table->string('contact_name');
             $table->string('contact_phone');
             $table->dateTime('last_used_at')->nullable();
