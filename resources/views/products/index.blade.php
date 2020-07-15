@@ -33,11 +33,17 @@
       @foreach($products as $product)
         <div class="col-3 product-item">
           <div class="product-content">
+        
             <div class="top">
-              <div class="img"><img src="{{ $product->image_url }}" alt=""></div>
-              <div class="price"><b>$A</b>{{ $product->price }}</div>
-              <div class="title">{{ $product->title }}</div>
+              <a href="{{route('products.show', ['product'=>$product->id])}}">
+                <div class="img"><img src="{{ $product->image_url }}" alt=""></div>
+              </a>
+              <div class="price"><b>A$</b>{{ $product->price }}</div>
+              <a href="{{route('products.show', ['product'=>$product->id])}}">
+                <div class="title">{{ $product->title }}</div>
+              </a>
             </div>
+          
             <div class="bottom">
               <div class="sold_count">Sold <span>{{ $product->sold_count }}</span></div>
               <div class="review_count">Reviews <span>{{ $product->review_count }}</span></div>
@@ -55,8 +61,8 @@
 
 @section('scriptsAfterJs')
   <script>
+    // show filters setting
     var filters = {!! json_encode($filters) !!};
-    console.log(filters);
     $(document).ready(function () {
       $('.search-form input[name=search]').val(filters.search);
       $('.search-form select[name=order]').val(filters.order);
@@ -65,5 +71,8 @@
         $('.search-form').submit();
       })
     })
+
+    // when click product image
+
   </script>
 @endsection

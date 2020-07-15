@@ -50,4 +50,14 @@ class ProductsController extends Controller
             ]
             ]);
     }
+
+    public function show(Product $product, Request $request)
+    {
+        // if product is ot on sale
+        if (!$product->on_sale) {
+            throw new \Exception('This product is not on sale');
+        }
+
+        return view('products.show', ['product' => $product]);
+    }
 }
