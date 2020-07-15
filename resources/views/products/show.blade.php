@@ -105,7 +105,34 @@
               location.reload();
             })
           })
+        });
+
+        // add to cart
+        $('.btn-add-to-cart').click(function () {
+          axios.post('{{route('cart.add')}}', {
+          sku_id: $('label.active input[name=skus').val(),
+          amount:$('.cart_amount input').val(),
         })
+        .then(function () {
+          swal('Added to Cart', '', 'success');
+        }, function (error) {
+          if (error.response.status === 401) {
+            swal('Please login first', '', 'error');
+          }else if (error.response.status === 422) {
+            var html = '<div>';
+              _.each(error.response.data.errors, function (errors) {
+                _.each(errors, function (error) {
+                  html += error+'<br>';
+                });
+              });
+            html += '</div>';
+            swal({content: $(html)[0], icon: 'error'})
+          }else {
+            swal('System Error', '', 'error');
+          };
+        });
+      });
+
     });
 </script>
 @endsection
