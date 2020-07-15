@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\InvalidRequestException;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -55,7 +56,7 @@ class ProductsController extends Controller
     {
         // if product is ot on sale
         if (!$product->on_sale) {
-            throw new \Exception('This product is not on sale');
+            throw new InvalidRequestException('Product not on sale');
         }
 
         return view('products.show', ['product' => $product]);
