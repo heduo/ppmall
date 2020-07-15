@@ -114,7 +114,10 @@
           amount:$('.cart_amount input').val(),
         })
         .then(function () {
-          swal('Added to Cart', '', 'success');
+          swal('Added to Cart', '', 'success')
+          .then(function () {
+            location.href = '{{ route('cart.index')}}';
+          });
         }, function (error) {
           if (error.response.status === 401) {
             swal('Please login first', '', 'error');

@@ -24,6 +24,7 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
+        "font-awesome": "^4.7.0",
         "sweetalert": "^2.1.2",
         "vue-place-autocomplete": "^0.5.3"
     }
