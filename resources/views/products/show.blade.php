@@ -35,8 +35,12 @@
         </div>
         <div class="cart_amount"><label>Quntity</label><input type="text" class="form-control form-control-sm" value="1"><span class="stock"></span></div>
         <div class="buttons">
-          <button class="btn btn-success btn-favor">❤ Add to Watchlist</button>
-          <button class="btn btn-primary btn-add-to-cart">Add to Cart</button>
+          @if ($favored)
+            <button class="btn btn-sm btn-danger btn-disfavor">Unsave</button>
+          @else
+            <button class="btn btn-sm btn-default btn-favor">❤ Save</button>
+          @endif
+          <button class="btn btn-sm btn-primary btn-add-to-cart">Add to Cart</button>
         </div>
       </div>
     </div>
@@ -71,7 +75,37 @@
         $('.sku-btn').click(function () {
             $('.product-info .price span').text($(this).data('price'));
             $('.product-info .stock').text('Stock: ' + $(this).data('stock'));
+        });
+
+        // on click 'Favor' button
+        $('.btn-favor').click(function () {
+          axios.post('{{route('products.favor', ['product' => $product->id])}}')
+          .then(function () {
+            swal('Favored', '', 'success')
+            .then(function () {
+              location.reload();
+            })
+          }, function (error) {
+            if (error.response && error.response.status === 401) {
+              swal('Please Login First', '', 'error');
+            }else if (error.response && (error.response.data.msg || error.response.data.message)) {
+              swal(error.response.data.msg ? error.response.data.msg : error.response.data.message, '', 'error');
+            }else{
+              swal('System Error', '', 'error');
+            }
+          });
+        });
+
+        // on click 'Disfavor' button
+        $('.btn-disfavor').click(function () {
+          axios.delete('{{ route('products.disfavor', ['product' => $product->id])}}')
+          .then(function () {
+            swal('Disfavored', '', 'success')
+            .then(function () {
+              location.reload();
+            })
+          })
         })
-    })
+    });
 </script>
 @endsection

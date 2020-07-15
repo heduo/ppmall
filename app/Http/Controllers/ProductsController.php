@@ -59,6 +59,35 @@ class ProductsController extends Controller
             throw new InvalidRequestException('Product not on sale');
         }
 
-        return view('products.show', ['product' => $product]);
+        $favored = false;
+
+        if ($user = $request->user()) {
+            $favored = boolval($user->favoriteProducts()->find($product->id)); // check if this product is favored
+        }
+
+        return view('products.show', ['product' => $product, 'favored' => $favored]);
+    }
+
+    public function favor(Product $product, Request $request)
+    {
+        $user = $request->user();
+
+        // if the product is favored, do nothing
+        if ($user->favoriteProducts()->find($product->id)) {
+            return [];
+        }
+
+        // otherwise, attach user to this product
+        $user->favoriteProducts()->attach($product);
+
+        return [];
+    }
+
+    public function disfavor(Product $product, Request $request)
+    {
+        $user = $request->user();
+        $user->favoriteProducts()->detach($product);
+
+        return [];
     }
 }
