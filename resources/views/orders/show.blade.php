@@ -35,7 +35,7 @@
           </td>
           <td class="sku-price text-center vertical-middle">A${{ $item->price }}</td>
           <td class="sku-amount text-center vertical-middle">{{ $item->amount }}</td>
-          <td class="item-amount text-right vertical-middle">￥{{ number_format($item->price * $item->amount, 2, '.', '') }}</td>
+          <td class="item-amount text-right vertical-middle">A${{ number_format($item->price * $item->amount, 2, '.', '') }}</td>
         </tr>
       @endforeach
       <tr><td colspan="4"></td></tr>
@@ -49,7 +49,7 @@
       <div class="order-summary text-right">
         <div class="total-amount">
           <span>Total Amount：</span>
-          <div class="value">￥{{ $order->total_amount }}</div>
+          <div class="value">A${{ $order->total_amount }}</div>
         </div>
         <div>
           <span>Status：</span>
