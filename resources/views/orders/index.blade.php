@@ -42,7 +42,7 @@
                         <span class="sku-title">{{ $item->productSku->title }}</span>
                       </div>
                     </td>
-                    <td class="sku-price text-center">￥{{ $item->price }}</td>
+                    <td class="sku-price text-center">A${{ $item->price }}</td>
                     <td class="sku-amount text-center">{{ $item->amount }}</td>
                     @if($index === 0)
                       <td rowspan="{{ count($order->items) }}" class="text-center total-amount">A${{ $order->total_amount }}</td>
@@ -61,7 +61,7 @@
                           Otherwise the order will automatically closed
                         @endif
                       </td>
-                      <td rowspan="{{ count($order->items) }}" class="text-center"><a  href="">View Order</a></td>
+                      <td rowspan="{{ count($order->items) }}" class="text-center"><a  href="{{route('orders.show', ['order' => $order->id])}}">View Order</a></td>
                     @endif
                   </tr>
                 @endforeach

@@ -153,7 +153,10 @@
 
               axios.post('{{ route('orders.store') }}', req)
                 .then(function (response) {
-                  swal('Order Created', '', 'success');
+                  swal('Order Created', '', 'success')
+                    .then(function () {
+                      location.href = '/orders/' + response.data.id;
+                    });
                 }, function (error) {
                   if (error.response.status === 422) {
                     // http status code 422 means user input validation failure
