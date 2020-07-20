@@ -165,6 +165,12 @@
           );
         document.querySelector(".result-message").classList.remove("hidden");
         document.querySelector("#submit").disabled = true;
+
+        // show success alert
+        swal('Order Paid', '', 'success')
+                    .then(function () {
+                      location.href = '/orders/' + {{$order->id}};
+                    });
       };
       // Show the customer the error from Stripe if their card fails to charge
       var showError = function(errorMsgText) {

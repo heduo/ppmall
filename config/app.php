@@ -230,6 +230,6 @@ return [
     ],
 
     // order expire time by seconds, will expire after 7 days
-    'order_expire' => 60*60*24*7 
+    'order_expire' => 60*60*7*24
 
 ];

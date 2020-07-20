@@ -1,0 +1,9 @@
+curl -XPOST http://ppmall.test/checkout/stripe/notify -d @stripe.charge.success.json -H "Content-Type: application/json"
+
+4242 4242 4242 4242 // good
+4000 0025 0000 3155 // auth needed
+4000 0000 0000 9995 // payment declined
+
+http://requestbin.net/r/yrmvgmyr?inspect
+
+http://ppmall.test:8025/

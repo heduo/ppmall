@@ -64,7 +64,7 @@ class OrderService
         });
 
         // dispatch job
-        dispatch(new CloseOrder($order, config('app.order_ttl')));
+        dispatch(new CloseOrder($order, config('app.order_expire')));
 
         return $order;
     }
