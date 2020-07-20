@@ -10,8 +10,15 @@
     <title>@yield('title', 'PP Mall')</title>
     <!-- css -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    {{-- load strip js --}}
+    @if (Str::contains(url()->current(), '/checkout/'))
+        <script src="https://js.stripe.com/v3/"></script>
+        @yield('stripeJs')
+    @endif
 </head>
 <body>
+    {{-- <h3>cuurent url: {{ url()->current()}}</h3>
+    <h3>contains '/checkout/' {{Str::contains(url()->current(), '/checkout/')}}</h3> --}}
     <div id="app" class="{{ route_class() }}-page">
         @include('layouts._header')
         <div class="container">

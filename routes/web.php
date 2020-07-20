@@ -42,12 +42,20 @@ Route::group(['middleware' => ['auth', 'verified']], function() {
     Route::post('orders', 'OrdersController@store')->name('orders.store');
     Route::get('orders', 'OrdersController@index')->name('orders.index');
     Route::get('orders/{order}', 'OrdersController@show')->name('orders.show');
+
+    // payment
+    Route::get('checkout/{order}', 'CheckoutController@index')->name('checkout.index');
+    Route::post('checkout/{order}/bycard', 'CheckoutController@payByCard')->name('checkout.bycard');
+    
 });
 
 // products
 Route::redirect('/', '/products')->name('root');
 Route::get('products', 'ProductsController@index')->name('products.index');
 Route::get('products/{product}', 'ProductsController@show')->name('products.show');
+
+
+Route::post('checkout/stripe/notify', 'CheckoutController@stripeNotify')->name('checkout.stripeNotify');
 
 
 

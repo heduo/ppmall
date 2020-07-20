@@ -17,6 +17,7 @@
         "laravel/framework": "^7.0",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^2.0",
+        "stripe/stripe-php": "^7.43",
         "yansongda/pay": "^2.9"
     },
     "require-dev": {

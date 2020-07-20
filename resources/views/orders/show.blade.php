@@ -67,10 +67,16 @@
             @endif
           </div>
         </div>
+        @if (!$order->paid_at && !$order->closed)
+            <div class="payment-buttons">
+              <a class="btn btn-primary btn-sm" href="{{route('checkout.index', ['order'=>$order->id])}}">Continue to Check Out</a>
+            </div>
+            
+        @endif
       </div>
     </div>
   </div>
 </div>
-</div>
+
 </div>
 @endsection
