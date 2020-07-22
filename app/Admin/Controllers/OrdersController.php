@@ -12,6 +12,7 @@ use Encore\Admin\Layout\Content;
 use Illuminate\Http\Request;
 use App\Exceptions\InvalidRequestException;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use App\Http\Requests\Admin\HandleRefundRequest;
 
 class OrdersController extends AdminController
 {
@@ -165,6 +166,29 @@ class OrdersController extends AdminController
         ]);
 
         return redirect()->back();
+    }
+
+    public function handleRefund(Order $order, HandleRefundRequest $request)
+    {
+        if ($order->refund_status !== Order::REFUND_STATUS_APPLIED) {
+            throw new InvalidRequestException('Refund is not applied');
+        }
+
+        if ($request->input('agree')) {
+            // todo
+        }else{
+            // put refuese reason in extra
+            $extra = $order->extra ? : [];
+            $extra['refund_disagree_reason'] = $request->input('reason');
+
+            // update status
+            $order->update([
+                'refund_status' => Order::REFUND_STATUS_PENDING,
+                'extra' => $extra
+            ]);
+        }
+
+        return $order;
     }
 }
 

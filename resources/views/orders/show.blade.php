@@ -87,6 +87,12 @@
               @endif
             </div>
           </div>
+          @if (isset($order->extra['refund_disagree_reason']))
+              <div>
+                <span>Refund Disagreed Reasons:</span>
+                <div class="value">{{$order->extra['refund_disagree_reason']}}</div>
+              </div>
+          @endif
           @if (!$order->paid_at && !$order->closed)
               <div class="payment-buttons">
                 <a class="btn btn-primary btn-sm" href="{{route('checkout.index', ['order'=>$order->id])}}">Continue to Check Out</a>
