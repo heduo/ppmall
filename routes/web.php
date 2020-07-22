@@ -50,6 +50,9 @@ Route::group(['middleware' => ['auth', 'verified']], function() {
     // payment
     Route::get('checkout/{order}', 'CheckoutController@index')->name('checkout.index');
     Route::post('checkout/{order}/bycard', 'CheckoutController@payByCard')->name('checkout.bycard');
+
+    // coupon code
+    Route::get('coupon_codes/{code}', 'CouponCodesController@show')->name('coupon_codes.show');
     
 });
 
