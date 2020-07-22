@@ -27,39 +27,34 @@ class CouponCodesController extends AdminController
         $grid = new Grid(new CouponCode());
 
         $grid->model()->orderBy('created_at', 'desc');
-        
+
         $grid->column('id', __('Id'))->sortable();
 
         $grid->column('name', __('Name'));
         $grid->column('code', __('Code'));
         $grid->column('description', __('Description'));
-        $grid->column('type', __('Type'))->display(function ($value)
-        {
+        $grid->column('type', __('Type'))->display(function ($value) {
             return CouponCode::$typeMap[$value];
         });
-        $grid->column('value', __('Value'))->display(function ($value)
-        {
-            return $this->type === CouponCode::TYPE_FIXED ? 'A$'.$value : $value.'%';
+        $grid->column('value', __('Value'))->display(function ($value) {
+            return $this->type === CouponCode::TYPE_FIXED ? 'A$' . $value : $value . '%';
         });
         // $grid->column('total', __('Total'));
         // $grid->column('used', __('Used'));
-        $grid->column('usage', 'Usage')->display(function ($value)
-        {
+        $grid->column('usage', 'Usage')->display(function ($value) {
             return "{$this->used} / {$this->total}";
         });
 
         $grid->column('min_amount', __('Min amount'));
         $grid->column('not_before', __('Not before'));
         $grid->column('not_after', __('Not after'));
-        $grid->column('enabled', __('Enabled'))->display(function ($value)
-        {
+        $grid->column('enabled', __('Enabled'))->display(function ($value) {
             return $value ? 'Yes' : 'No';
         });
         $grid->column('created_at', __('Created at'));
-       // $grid->column('updated_at', __('Updated at'));
+        // $grid->column('updated_at', __('Updated at'));
 
-        $grid->actions(function ($actions)
-        {
+        $grid->actions(function ($actions) {
             $actions->disableView();
         });
 
@@ -100,18 +95,37 @@ class CouponCodesController extends AdminController
      */
     protected function form()
     {
-        $form = new Form(new CouponCode());
+        $form = new Form(new CouponCode);
 
-        $form->text('name', __('Name'));
-        $form->text('code', __('Code'));
-        $form->text('type', __('Type'));
-        $form->decimal('value', __('Value'));
-        $form->number('total', __('Total'));
-        $form->number('used', __('Used'));
-        $form->decimal('min_amount', __('Min amount'));
-        $form->datetime('not_before', __('Not before'))->default(date('Y-m-d H:i:s'));
-        $form->datetime('not_after', __('Not after'))->default(date('Y-m-d H:i:s'));
-        $form->switch('enabled', __('Enabled'));
+        $form->display('id', 'ID');
+        $form->text('name', 'Name')->rules('required');
+        $form->text('code', 'Code')->rules(function ($form)
+        {
+            if ($id = $form->model()->id) {
+                return 'nullable|unique:coupon_codes,code,'.$id.',id';
+            }else{
+                return 'nullable|unique:coupon_codes';
+            }
+        });
+        $form->radio('type', 'Type')->options(CouponCode::$typeMap)->rules('required')->default(CouponCode::TYPE_FIXED);
+        $form->text('value', 'Discount')->rules(function ($form) {
+            if (request()->input('type') === CouponCode::TYPE_PERCENT) {
+                return 'required|numeric|between:1,99';
+            } else {
+                return 'required|numeric|min:0.01';
+            }
+        });
+        $form->text('total', 'Total Quantity')->rules('required|numeric|min:0');
+        $form->text('min_amount', 'On Minimum Amount')->rules('required|numeric|min:0');
+        $form->datetime('not_before', 'Start Time');
+        $form->datetime('not_after', 'End Time');
+        $form->radio('enabled', 'Enable')->options(['1' => 'Yes', '0' => 'Not']);
+
+        $form->saving(function (Form $form) {
+            if (!$form->code) {
+                $form->code = CouponCode::findAvailableCode();
+            }
+        });
 
         return $form;
     }
