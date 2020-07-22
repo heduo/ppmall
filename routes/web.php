@@ -43,6 +43,8 @@ Route::group(['middleware' => ['auth', 'verified']], function() {
     Route::get('orders', 'OrdersController@index')->name('orders.index');
     Route::get('orders/{order}', 'OrdersController@show')->name('orders.show');
     Route::post('order/{order}/received', 'OrdersController@received')->name('orders.received');
+    Route::get('orders/{order}/review', 'OrdersController@review')->name('orders.review.show');
+    Route::post('orders/{order}/review', 'OrdersController@sendReview')->name('orders.review.store');
 
     // payment
     Route::get('checkout/{order}', 'CheckoutController@index')->name('checkout.index');

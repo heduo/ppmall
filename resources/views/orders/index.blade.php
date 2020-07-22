@@ -61,7 +61,14 @@
                           Otherwise the order will automatically closed
                         @endif
                       </td>
-                      <td rowspan="{{ count($order->items) }}" class="text-center"><a  href="{{route('orders.show', ['order' => $order->id])}}">View Order</a></td>
+                      <td rowspan="{{ count($order->items) }}" class="text-center">
+                        <a  class="btn btn-sm btn-primary" href="{{route('orders.show', ['order' => $order->id])}}">View Order</a>
+                        @if ($order->paid_at)
+                      <a href="{{route('orders.review.show', ['order'=>$order->id])}}" class="btn btn-success btn-sm">
+                        {{$order->reviewed ? 'See Reviews' : 'Review'}}
+                      </a>
+                        @endif
+                      </td>
                     @endif
                   </tr>
                 @endforeach
