@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use App\Exceptions\InvalidRequestException;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use App\Http\Requests\Admin\HandleRefundRequest;
+use App\Services\Payments\StripeService;
 
 class OrdersController extends AdminController
 {
@@ -175,7 +176,15 @@ class OrdersController extends AdminController
         }
 
         if ($request->input('agree')) {
-            // todo
+           // clear disagree refund reasons
+           $extra = $order->extra ?:[];
+           unset($extra['refund_disagree_reason']);
+           $order->update([
+               'extra' => $extra
+           ]);
+
+           $this->_refundOrder($order);
+
         }else{
             // put refuese reason in extra
             $extra = $order->extra ? : [];
@@ -190,6 +199,46 @@ class OrdersController extends AdminController
 
         return $order;
     }
+
+    protected function _refundOrder(Order $order)
+    {
+        switch ($order->payment_method) {
+            case 'Card':
+                $this->refundFromStripe($order);
+            ;
+                break;
+            
+            default:
+                # code...
+                break;
+        }
+    }
+
+    public function refundFromStripe(Order $order)
+    {
+        try {
+            $stripe = new StripeService;
+            $refund = $stripe->refund($order->payment_no);
+            // update order table
+            $order->update([
+                'refund_no' => $refund->id,
+                'refund_status' => Order::REFUND_STATUS_SUCCESS
+            ]);
+           
+        } catch (\Stripe\Exception\CardException $e) {
+            $extra = $order->extra;
+            $extra['refund_exception_msg'] = $e->getError()->message;
+
+            $order->update([
+                'refund_status' => Order::REFUND_STATUS_FAILED,
+                'extra' => $extra
+            ]);
+        }
+       
+
+
+    }
+   
 }
 
     

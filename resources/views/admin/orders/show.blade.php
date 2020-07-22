@@ -46,6 +46,7 @@
           <td>{{ \App\Models\Order::$shipStatusMap[$order->ship_status] }}</td>
         </tr>
         @if($order->ship_status === \App\Models\Order::SHIP_STATUS_PENDING)
+          @if ($order->refund_status !== \App\Models\Order::REFUND_STATUS_SUCCESS)
           <tr>
             <td colspan="4">
               <form action="{{ route('admin.orders.ship', [$order->id]) }}" method="post" class="form-inline">
@@ -73,6 +74,8 @@
               </form>
             </td>
           </tr>
+          @endif
+          
         @else
           <tr>
             <td>Shipping Company:</td>
@@ -138,6 +141,40 @@
         }).then(function () {
           location.reload();
         });
+      });
+    });
+
+    // click agree rfund
+    $('#btn-refund-agree').click(function () {
+      swal({
+        title:'Do you want to refund?',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancel',
+        showLoaderOnConfirm: true,
+        preConfirm: function () {
+          return $.ajax({
+            url: '{{route('admin.orders.handle_refund', [$order->id])}}',
+            type: 'POST',
+            data: JSON.stringify({
+              agree: true,
+              _token: LA.token
+            }),
+            contentType: 'application/json'
+          });
+        },
+        allowOutsideClick: false
+      }).then(function (res) {
+        if (res.dismiss == 'cancel') {
+          return;
+        }
+        swal({
+          title: 'Refund successfully',
+          type: 'success'
+        }).then(function () {
+          location.reload();
+        })
       });
     });
   });

@@ -34,12 +34,12 @@ class CheckoutController extends Controller
 
         $totalAmount = $order->total_amount*100;
 
-        $apiKey = "sk_test_51H6rl7J5k6agZHzcRbLRB2beYOzWy7KFEVOupkqmCu0uS4OVVXHQnTYmwbkSHFK6YyQy26kh13fAhxJHyEGmOIp000uSLMPnPn";
+       // $apiKey = "sk_test_51H6rl7J5k6agZHzcRbLRB2beYOzWy7KFEVOupkqmCu0uS4OVVXHQnTYmwbkSHFK6YyQy26kh13fAhxJHyEGmOIp000uSLMPnPn";
         $metadata = [
             'order_no' => $order->no,
             'payment_method' => 'Card'
         ];
-        $res = $stripeService->createClientSecret($apiKey, $totalAmount, $metadata);
+        $res = $stripeService->createClientSecret($totalAmount, $metadata);
 
         return response()->json([
             'clientSecret' => $res['clientSecret']

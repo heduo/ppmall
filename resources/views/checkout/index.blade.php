@@ -83,8 +83,8 @@
     <script>
       (function () {
         
-         // A reference to Stripe.js initialized with your real test publishable API key.
-      var stripe = Stripe("pk_test_51H6rl7J5k6agZHzcTd9KBIQHJc7BY0FSe0dIys9GQ75AODzVBpYOeNW3PaYfazzSZr7rq93HKojmD35Ox9uECijN00P826uay7");
+      // A reference to Stripe.js initialized with your real test publishable API key.
+      var stripe = Stripe("{{config('stripe.public_key')}}");
 
       // Disable the button until we have Stripe set up on the page
       //document.querySelector("#submit").disabled = true;
