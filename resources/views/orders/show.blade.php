@@ -46,10 +46,23 @@
           <div class="line"><div class="line-label">Remark：</div><div class="line-value">{{ $order->remark ?: '-' }}</div></div>
           <div class="line"><div class="line-label">Order No.：</div><div class="line-value">{{ $order->no }}</div></div>
           <div class="line"><div class="line-lable">Shipping Status:</div><div class="line-value">{{\App\Models\Order::$shipStatusMap[$order->ship_status]}}</div></div>
+          <!-- ship info -->
           @if ($order->ship_data)
               <div class="line">
                 <div class="line-lable">Shipping Info</div>
                 <div class="line-value">{{$order->ship_data['express_company']}} {{$order->ship_data['express_no']}}</div>
+              </div>
+          @endif
+          @if ($order->paid_at && $order->refund_status !== \App\Models\Order::REFUND_STATUS_PENDING)
+              <div class="line">
+                <div class="line-label">
+                  Refund Status: 
+                </div>
+                <div class="line-value">{{ \App\Models\Order::$refundStatusMap[$order->refund_status]}}</div>
+              </div>
+              <div class="line">
+                <div class="line-label">Refund Reasons: </div>
+              <div class="line-value">{{ $order->extra['refund_reason']}}</div>
               </div>
           @endif
         </div>
@@ -84,6 +97,12 @@
                 <button type="button" id="btn-receive" class="btn btn-sm btn-success">Confirm Receipt </button>
               </div>
           @endif
+
+          @if ($order->paid_at && $order->refund_status === \App\Models\Order::REFUND_STATUS_PENDING)
+              <div class="refund-button">
+                <button class="btn btn-sm btn-danger" id="btn-apply-refund">Apply Refund</button>
+              </div>
+          @endif
           
         </div>
       </div>
@@ -95,6 +114,7 @@
 @section('scriptsAfterJs')
     <script>
       $(document).ready(function(){
+        // confirm order received
         $('#btn-receive').click(function(){
           swal({
             title: "Are you sure you've received your goods ?",
@@ -113,6 +133,25 @@
               location.reload();
             });
 
+          });
+        });
+
+        // apply for refund
+        $('#btn-apply-refund').click(function () {
+          swal({
+            text: 'Please input refund reasons',
+            content: 'input'
+          }).then(function (input) {
+            if (!input) {
+              swal('Refund reasons are required', '', 'error'); return;
+            }
+
+            axios.post('{{route('orders.apply_refund', [$order->id])}}', {reason:input})
+            .then(function () {
+              swal('Apply for refund successfully', '', 'success').then(function () {
+                location.reload();
+              });
+            });
           });
         });
       });

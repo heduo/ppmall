@@ -14,6 +14,7 @@ use App\Jobs\CloseOrder;
 use App\Services\CartService;
 use App\Services\OrderService;
 use App\Http\Requests\SendReviewRequest;
+use App\Http\Requests\ApplyRefundRequest;
 
 class OrdersController extends Controller
 {
@@ -104,5 +105,28 @@ class OrdersController extends Controller
         });
 
         return redirect()->back();
+    }
+
+    public function applyRefund(Order $order, ApplyRefundRequest $request)
+    {
+        $this->authorize('own', $order);
+
+        if (!$order->paid_at) {
+            throw new InvalidRequestException("This order is not paid.");
+        }
+
+        if ($order->refund_status !== Order::REFUND_STATUS_PENDING) {
+            throw new InvalidRequestException("This order has been applied for refund");
+        }
+
+        $extra = $order->extra ? : [];
+        $extra['refund_reason'] = $request->input('reason');
+
+        $order->update([
+            'refund_status' => Order::REFUND_STATUS_APPLIED,
+            'extra' => $extra
+        ]);
+
+        return $order;
     }
 }
