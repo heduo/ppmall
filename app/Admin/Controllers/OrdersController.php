@@ -9,8 +9,13 @@ use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use Encore\Admin\Layout\Content;
 
+use Illuminate\Http\Request;
+use App\Exceptions\InvalidRequestException;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+
 class OrdersController extends AdminController
 {
+    use ValidatesRequests;
     /**
      * Title for current resource.
      *
@@ -134,4 +139,33 @@ class OrdersController extends AdminController
         return $content ->header('View Order')
                         ->body(view('admin.orders.show', ['order' => Order::find($id)]));
     }
+
+    public function ship(Order $order, Request $request)
+    {
+        // check if order is paid
+        if (!$order->paid_at) {
+            throw new InvalidRequestException('This order is not paid');
+        }
+        // check if order is shipped
+        if ($order->ship_status !== Order::SHIP_STATUS_PENDING) {
+            throw new InvalidRequestException('This order is shipped');
+        }
+        
+        $data = $this->validate($request, [
+            'express_company' => ['required'],
+            'express_no'      => ['required'],
+        ], [], [
+            'express_company' => 'Shipping Company',
+            'express_no'      => 'Shipping Number',
+        ]);
+        // update ship status
+        $order->update([
+            'ship_status' => Order::SHIP_STATUS_DELIVERED,
+            'ship_data'   => $data, 
+        ]);
+
+        return redirect()->back();
+    }
 }
+
+    

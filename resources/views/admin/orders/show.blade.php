@@ -41,9 +41,50 @@
         @endforeach
         <tr>
           <td>Total Amount:</td>
-          <td colspan="3">A$ {{ $order->total_amount }}</td>
+          <td >A$ {{ $order->total_amount }}</td>
+          <td>Shipping Status：</td>
+          <td>{{ \App\Models\Order::$shipStatusMap[$order->ship_status] }}</td>
         </tr>
+        @if($order->ship_status === \App\Models\Order::SHIP_STATUS_PENDING)
+      <tr>
+        <td colspan="4">
+          <form action="{{ route('admin.orders.ship', [$order->id]) }}" method="post" class="form-inline">
+           
+            {{ csrf_field() }}
+            <div class="form-group {{ $errors->has('express_company') ? 'has-error' : '' }}">
+              <label for="express_company" class="control-label">Shipping Company</label>
+              <input type="text" id="express_company" name="express_company" value="" class="form-control" placeholder="">
+              @if($errors->has('express_company'))
+                @foreach($errors->get('express_company') as $msg)
+                  <span class="help-block">{{ $msg }}</span>
+                @endforeach
+              @endif
+            </div>
+            <div class="form-group {{ $errors->has('express_no') ? 'has-error' : '' }}">
+              <label for="express_no" class="control-label">Tracking Number</label>
+              <input type="text" id="express_no" name="express_no" value="" class="form-control" placeholder="">
+              @if($errors->has('express_no'))
+                @foreach($errors->get('express_no') as $msg)
+                  <span class="help-block">{{ $msg }}</span>
+                @endforeach
+              @endif
+            </div>
+            <button type="submit" class="btn btn-success" id="ship-btn">Ship</button>
+          </form>
+        </td>
+      </tr>
+      @else
+      
+      <tr>
+        <td>Shipping Company:</td>
+        <td>{{ $order->ship_data['express_company'] }}</td>
+        <td>Shipping Number</td>
+        <td>{{ $order->ship_data['express_no'] }}</td>
+      </tr>
+      @endif
         </tbody>
       </table>
     </div>
   </div>
+
+    
