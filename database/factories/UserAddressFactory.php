@@ -28,7 +28,7 @@ $factory->define(UserAddress::class, function (Faker $faker) {
         'address2' => '',
         'postcode' => $faker->randomNumber(4),
         'contact_name' => $faker->name,
-        'contact_phone' => $faker->randomNumber
+        'contact_phone' => $faker->randomNumber(10)
     ];
    
 });
