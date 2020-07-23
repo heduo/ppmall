@@ -6,16 +6,21 @@ use App\Models\User;
 use App\Models\UserAddress;
 use App\Models\Order;
 use App\Models\ProductSku;
+use App\Models\CouponCode;
 use App\Exceptions\InvalidRequestException;
 use App\Jobs\CloseOrder;
 use Carbon\Carbon;
+use App\Exceptions\CouponCodeUnavailableException;
 
 class OrderService
 {
-    public function store(User $user, UserAddress $address, $remark, $items)
+    public function store(User $user, UserAddress $address, $remark, $items, CouponCode $coupon = null)
     {
+        if ($coupon) {
+            $coupon->checkAvailable();
+        }
          // start a DB transaction
-        $order = \DB::transaction(function () use ($user, $address, $remark, $items) {
+        $order = \DB::transaction(function () use ($user, $address, $remark, $items, $coupon) {
             // update address's last_used_at time
             $address->update(['last_used_at' => Carbon::now()]);
             // create a new order
@@ -35,7 +40,7 @@ class OrderService
             $order->save();
 
             $totalAmount = 0;
-            // 遍历用户提交的 SKU
+            // for every item
             foreach ($items as $data) {
                 $sku  = ProductSku::find($data['sku_id']);
                  // Create OrderItem model and associate with Order model
@@ -52,6 +57,17 @@ class OrderService
                 if ($sku->decreaseStock($data['amount']) <= 0) {
                     throw new InvalidRequestException('Stock is insufficient');
                 }
+            }
+
+            // apply coupon code
+            if ($coupon) {
+                $coupon->checkAvailable($totalAmount);
+                $totalAmount = $coupon->getDiscountedPrice($totalAmount);
+                $order->couponCode()->associate($coupon);
+                if ($coupon->changedUsed()<=0) {
+                   throw new CouponCodeUnavailableException('This coupon code is used out');
+                }
+
             }
             // update total amount
             $order->update(['total_amount' => $totalAmount]);

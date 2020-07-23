@@ -138,7 +138,8 @@
               var req = {
                 address_id: $("#order-form").find('select[name=address]').val(),
                 items:[],
-                remark: $('#order-form').find('textarea[name=remark]').val()
+                remark: $('#order-form').find('textarea[name=remark]').val(),
+                coupon_code: $('input[name=coupon_code]').val()
               };
 
               $('table tr[data-id]').each(function (){
@@ -208,7 +209,7 @@
                 }, function (error) {
                   // if response status is 404
                   if(error.response.status === 404) {
-                    swal('Coupon code does not exist, '', 'error');
+                    swal('Coupon code does not exist', '', 'error');
                   } else if (error.response.status === 403) {
                   // message for error 403
                     swal(error.response.data.msg, '', 'error');

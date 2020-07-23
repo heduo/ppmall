@@ -10,11 +10,13 @@ use App\Models\UserAddress;
 use App\Models\Order;
 use Carbon\Carbon;
 use App\Exceptions\InvalidRequestException;
+use App\Exceptions\CouponCodeUnavailableException;
 use App\Jobs\CloseOrder;
 use App\Services\CartService;
 use App\Services\OrderService;
 use App\Http\Requests\SendReviewRequest;
 use App\Http\Requests\ApplyRefundRequest;
+use App\Models\CouponCode;
 
 class OrdersController extends Controller
 {
@@ -22,8 +24,17 @@ class OrdersController extends Controller
     {
         $user  = $request->user();
         $address = UserAddress::find($request->input('address_id'));
+        $coupon = null;
 
-        return $orderService->store($user, $address, $request->input('remark'), $request->input('items'));
+        if ($code = $request->input('coupon_code')) {
+            $coupon = CouponCode::where('code', $code)->first();
+            if (!$coupon) {
+                throw new CouponCodeUnavailableException('This coupon code does not exist');
+                
+            }
+        }
+
+        return $orderService->store($user, $address, $request->input('remark'), $request->input('items'), $coupon);
         
     }
 

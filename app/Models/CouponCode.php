@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Encore\Admin\Traits\DefaultDatetimeFormat;
 use Illuminate\Support\Str;
+use App\Exceptions\CouponCodeUnavailableException;
+use Carbon\Carbon;
 
 class CouponCode extends Model
 {
@@ -61,5 +63,53 @@ class CouponCode extends Model
         }
 
         return 'A$'.str_replace('.00', '', $this->value).' Off'.$str;
+    }
+
+    public function checkAvailable($orderAmount = null)
+    {
+        
+
+        // if code is not enabled
+        if (!$this->enabled) {
+            throw new CouponCodeUnavailableException('This code does not exist');
+        }
+
+        // if code is used out
+        if ($this->total - $this->used <= 0) {
+            throw new CouponCodeUnavailableException('This code is used out');
+        }
+
+        if ($this->not_before && $this->not_before->gt(Carbon::now())) {
+            throw new CouponCodeUnavailableException('This code is not available yet');
+        }
+
+        if ($this->not_after && $this->not_after->lt(Carbon::now())) {
+            throw new CouponCodeUnavailableException('This code has expired');
+        }
+
+        if (!is_null($orderAmount) && $orderAmount < $this->min_amount) {
+            throw new CouponCodeUnavailableException('Amount is too small to use this code');
+            
+        }
+    }
+
+    public function getDiscountedPrice($orderAmount)
+    {
+       if ($this->type === self::TYPE_FIXED) {
+           // min amount should greater than 0.01
+           return max(0.01, $orderAmount - $this->value);
+       }
+
+       return number_format($orderAmount * (100-$this->value)/100, 2);
+    }
+
+    public function changedUsed($increase = true)
+    {
+        if ($increase) {
+            // increase used, if it's less than total
+            return $this->where('id', $this->id)->where('used', '<', $this->total)->increment('used'); 
+        }else{
+            return $this->decrement('used'); // if order expires, decrease used
+        }
     }
 }
