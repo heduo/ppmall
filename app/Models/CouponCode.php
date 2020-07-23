@@ -7,6 +7,7 @@ use Encore\Admin\Traits\DefaultDatetimeFormat;
 use Illuminate\Support\Str;
 use App\Exceptions\CouponCodeUnavailableException;
 use Carbon\Carbon;
+use App\Models\User;
 
 class CouponCode extends Model
 {
@@ -65,7 +66,7 @@ class CouponCode extends Model
         return 'A$'.str_replace('.00', '', $this->value).' Off'.$str;
     }
 
-    public function checkAvailable($orderAmount = null)
+    public function checkAvailable(User $user, $orderAmount = null)
     {
         
 
@@ -89,7 +90,31 @@ class CouponCode extends Model
 
         if (!is_null($orderAmount) && $orderAmount < $this->min_amount) {
             throw new CouponCodeUnavailableException('Amount is too small to use this code');
-            
+        }
+
+        // if order is paid and not refunded, then coupon is used; if order is not paid and order is not closed, then coupon is used
+        /**
+         * 
+         * select * from orders where user_id = xx and coupon_code_id = xx
+         * and (
+         * ( paid_at is null and closed = 0 )
+         * or ( paid_at is not null and refund_status != 'success' )
+         * )
+         * 
+         */
+        $used = Order::where('user_id', $user->id)
+                ->where('coupon_code_id', $this->id)
+                ->where(function ($query){
+                   $query->where(function ($query){
+                       $query->whereNull('paid_at')->where('closed', false);
+                   })->orWhere(function ($query){
+                    $query->whereNotNull('paid_at')->where('refund_status', '!=', Order::REFUND_STATUS_SUCCESS);
+                }); 
+            })->exists();
+
+        if ($used) {
+           throw new CouponCodeUnavailableException("You've used this coupon code");
+           
         }
     }
 

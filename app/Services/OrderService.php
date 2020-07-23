@@ -17,7 +17,7 @@ class OrderService
     public function store(User $user, UserAddress $address, $remark, $items, CouponCode $coupon = null)
     {
         if ($coupon) {
-            $coupon->checkAvailable();
+            $coupon->checkAvailable($user);
         }
          // start a DB transaction
         $order = \DB::transaction(function () use ($user, $address, $remark, $items, $coupon) {
@@ -61,9 +61,10 @@ class OrderService
 
             // apply coupon code
             if ($coupon) {
-                $coupon->checkAvailable($totalAmount);
+                $coupon->checkAvailable($user, $totalAmount);
                 $totalAmount = $coupon->getDiscountedPrice($totalAmount);
                 $order->couponCode()->associate($coupon);
+                
                 if ($coupon->changedUsed()<=0) {
                    throw new CouponCodeUnavailableException('This coupon code is used out');
                 }
