@@ -65,7 +65,7 @@ class OrderService
                 $totalAmount = $coupon->getDiscountedPrice($totalAmount);
                 $order->couponCode()->associate($coupon);
                 
-                if ($coupon->changedUsed()<=0) {
+                if ($coupon->changeUsed()<=0) {
                    throw new CouponCodeUnavailableException('This coupon code is used out');
                 }
 

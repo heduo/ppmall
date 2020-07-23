@@ -13,22 +13,29 @@ $factory->define(UserAddress::class, function (Faker $faker) {
         ["TAS", "Hobart"],
         ["WA", "Perth"],
         ["SA". "Adelaide"],
-        ["ACT", "cANBERRA"],
+        ["ACT", "Canberra"],
         ["NT", "Darwin"],
         ["ACT", "Jevis Bay Village"]
     ];
 
     $address = $faker->randomElement($addresses);
 
+    if(count($address)==2){
+        $state = $address[0];
+        $suburb = $address[1];
+    }else{
+        $state = 'SA';
+        $suburb = 'Adelaide';
+    }
     return [
         'country' => 'Australia',
-        'state' => $address[0],
-        'suburb' => $address[1],
+        'suburb' => $suburb,
+        'state' => $state,
         'address1' => sprintf('%d %s St', $faker->randomNumber(2), $faker->firstName()),
         'address2' => '',
         'postcode' => $faker->randomNumber(4),
         'contact_name' => $faker->name,
-        'contact_phone' => $faker->randomNumber(10)
+        'contact_phone' => $faker->randomNumber()
     ];
    
 });

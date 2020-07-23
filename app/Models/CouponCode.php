@@ -125,10 +125,10 @@ class CouponCode extends Model
            return max(0.01, $orderAmount - $this->value);
        }
 
-       return number_format($orderAmount * (100-$this->value)/100, 2);
+       return number_format($orderAmount * (100-$this->value)/100, 2, '.', '');
     }
 
-    public function changedUsed($increase = true)
+    public function changeUsed($increase = true)
     {
         if ($increase) {
             // increase used, if it's less than total
