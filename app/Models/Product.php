@@ -10,7 +10,7 @@ class Product extends Model
 {
 
     protected $fillable = [
-        'title', 'description', 'image', 'on_sale',
+        'title', 'description', 'image', 'images','on_sale',
         'rating', 'sold_count', 'review_count', 'price'
     ];
     protected $casts = [
@@ -31,4 +31,15 @@ class Product extends Model
 
         return Storage::disk('public')->url($this->attributes['image']);
     }
+
+    public function getImagesAttribute($value)
+    {
+        return explode(',', $value);
+    }
+
+    public function setImagesAttribute($value)
+    {
+        $this->attributes['images'] = implode(',', $value);
+    }
+
 }

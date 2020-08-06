@@ -95,6 +95,7 @@ class ProductsController extends AdminController
         $form->text('title', __('Product title'))->rules('required');
         $form->quill('description', __('Description'))->rules('required');
         $form->image('image', __('Image'));
+        $form->multipleImage('images')->removable();
         $form->switch('on_sale', __('On sale'))->default(0);
        
         $form->hasMany('skus', 'SKU List', function (Form\NestedForm $form)
