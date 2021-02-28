@@ -12,6 +12,7 @@ class UserAddress extends Model
         'suburb',
         'postcode',
         'address1',
+        'address2',
         'contact_name',
         'contact_phone',
         'last_used_at',

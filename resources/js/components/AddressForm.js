@@ -28,6 +28,7 @@ Vue.component('address-form',{
 
     function fillInAddress() {
       var place = autocomplete.getPlace();
+      console.log(place);
       // Get each component of the address from the place details,
       // and then fill-in the corresponding field on the form.
       for (var i = 0; i < place.address_components.length; i++) {
