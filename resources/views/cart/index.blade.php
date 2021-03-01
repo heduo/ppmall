@@ -183,7 +183,7 @@
                     html += '</div>';
                     swal({content: $(html)[0], icon: 'error'})
                   } else if (error.response.status === 403){
-                    swal(error.response.data.msg, '', 'error');
+                    swal(error.response.data.message, '', 'error');
                   } else {
                     swal('System Error', '', 'error');
                   }

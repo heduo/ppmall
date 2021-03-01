@@ -53,7 +53,7 @@ class CheckoutController extends Controller
         // response 
         $json_str = file_get_contents('php://input');
         $res = json_decode($json_str, 1);
-        // print_r($res['data']['object']);
+        print_r($res);
         $charge = $res['data']['object'];
         
         $paid_at = date("Y-m-d H:i:s", substr($charge['created'], 0, 10));
