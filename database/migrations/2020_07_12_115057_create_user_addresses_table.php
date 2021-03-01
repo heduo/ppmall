@@ -21,11 +21,7 @@ class CreateUserAddressesTable extends Migration
             $table->string('state');
             $table->string('suburb');
             $table->string('address1');
-<<<<<<< HEAD
-            $table->string('address2')->nullable();;
-=======
             $table->string('address2')->nullable();
->>>>>>> 2e8e0d689e313589cd8bb7cd7129efb37fb31fe3
             $table->unsignedInteger('postcode');
             $table->string('contact_name');
             $table->string('contact_phone');
