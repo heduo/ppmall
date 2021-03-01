@@ -8,6 +8,18 @@
                 <div class="card-header">{{ __('Login') }}</div>
 
                 <div class="card-body">
+                   <div class="row">
+                   <div class="col-md-6">
+                        <div >
+                            <h5 class="text-danger">Demo Account:</h5>
+                            <p> username: heduo666@gmail.com</p>
+                            <p> password: test1234</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 float-right">
+                        <p class="text-success">* If demo account can't be used, don't be lazy, just register a new account by yourself!</p>
+                    </div></div>
+                    <br>
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
 
